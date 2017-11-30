@@ -1,8 +1,5 @@
 /*
 TODO:
-
-MAIN PROBLEM: HOW TO CHECK A WATER LEAK???
-
 1. ability to change FREQUENCY via mobile app
 2. ability to change CONST_GRAVITY via mobile app
 3. handling request from mobile app to immediately check a "leak status"
@@ -14,16 +11,15 @@ MAIN PROBLEM: HOW TO CHECK A WATER LEAK???
 
 #define SENSOR_ID 1
 #define FREQUENCY 100 // miliseconds
-#define CONST_GRAVITY 9.81 // m/s
+#define CONST_SUM 10.50 // m/s
 
-#define NO_LEAK_CODE 100 // TODO - point 3
+#define NO_LEAK_CODE 100
 #define SMALL_LEAK_CODE 200
 #define LARGE_LEAK_CODE 300
 #define BIG_LEAK_CODE 400
 
-#define SMALL_LEAK_RANGE 0.3
-#define LARGE_LEAK_RANGE 0.5
-#define BIG_LEAK_RANGE 0.7
+#define SMALL_LEAK_RANGE 12
+#define LARGE_LEAK_RANGE 14
 
 
 Adafruit_MMA8451 mmaSensor = Adafruit_MMA8451();
@@ -39,40 +35,33 @@ void setup(void) {
 
 void loop() {
   int statusCode;
-  int orientationCode;
 
   mmaSensor.read();
   sensors_event_t event;
   mmaSensor.getEvent(&event);
 
-  float x_diff = abs(event.acceleration.x - CONST_GRAVITY);
-  float y_diff = abs(event.acceleration.y - CONST_GRAVITY);
-  float z_diff = abs(event.acceleration.z - CONST_GRAVITY);
-
-  // statusCode = constLeakChecking(x_diff, y_diff, z_diff);
-  // if (statusCode != NO_LEAK_CODE);
-  // {
-  //   //String message = String(code) + SENSOR_ID;
-  //   //Serial.println(message);
-  // }
-
-
+  float sum = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
+  statusCode = constLeakChecking(sum);
+  if (statusCode != NO_LEAK_CODE)
+  {
+    String message = String(statusCode) + SENSOR_ID;
+    Serial.println(message);
+  }
   delay(FREQUENCY);
 }
 
-int constLeakChecking(float x_diff, float y_diff, float z_diff)
+int constLeakChecking(float sum)
   {
     int lstatus;
 
-    if (x_diff > SMALL_LEAK_RANGE || y_diff > SMALL_LEAK_RANGE || z_diff > SMALL_LEAK_RANGE)
-      lstatus = SMALL_LEAK_CODE;
-    else if (x_diff > LARGE_LEAK_RANGE || y_diff > LARGE_LEAK_RANGE || z_diff > LARGE_LEAK_RANGE)
-      lstatus = LARGE_LEAK_CODE;
-    else if (x_diff > BIG_LEAK_RANGE || y_diff > BIG_LEAK_RANGE || z_diff > BIG_LEAK_RANGE)
-      lstatus = BIG_LEAK_CODE;
-    else
+    if (sum < CONST_SUM)
       lstatus = NO_LEAK_CODE;
+    else if (sum < SMALL_LEAK_RANGE)
+      lstatus = SMALL_LEAK_CODE;
+    else if (sum < LARGE_LEAK_RANGE)
+      lstatus = LARGE_LEAK_CODE;
+    else
+      lstatus = BIG_LEAK_CODE;
 
     return lstatus;
   }
-}
