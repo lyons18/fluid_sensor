@@ -1,5 +1,8 @@
 /*
 TODO:
+
+MAIN PROBLEM: HOW TO CHECK A WATER LEAK???
+
 1. ability to change FREQUENCY via mobile app
 2. ability to change CONST_GRAVITY via mobile app
 3. handling request from mobile app to immediately check a "leak status"
@@ -42,69 +45,34 @@ void loop() {
   sensors_event_t event;
   mmaSensor.getEvent(&event);
 
-  //add orientation reader !
-
   float x_diff = abs(event.acceleration.x - CONST_GRAVITY);
   float y_diff = abs(event.acceleration.y - CONST_GRAVITY);
   float z_diff = abs(event.acceleration.z - CONST_GRAVITY);
 
-  //orientationCode = orientationChecking(mmaSensor.getOrientation());
-  statusCode = constLeakChecking(x_diff, y_diff, z_diff);
-  if (statusCode != NO_LEAK_CODE);
-  {
-    //String message = String(code) + SENSOR_ID;
-    //Serial.println(message);
-    Serial.println(event.acceleration.x);
-    Serial.println(event.acceleration.y);
-    Serial.println(event.acceleration.z);
-    orientationChecking(mmaSensor.getOrientation());
-  }
+  // statusCode = constLeakChecking(x_diff, y_diff, z_diff);
+  // if (statusCode != NO_LEAK_CODE);
+  // {
+  //   //String message = String(code) + SENSOR_ID;
+  //   //Serial.println(message);
+  // }
+
+
   delay(FREQUENCY);
 }
 
 int constLeakChecking(float x_diff, float y_diff, float z_diff)
-{
-  int lstatus;
+  {
+    int lstatus;
 
-  if (x_diff > SMALL_LEAK_RANGE || y_diff > SMALL_LEAK_RANGE || z_diff > SMALL_LEAK_RANGE)
-    lstatus = SMALL_LEAK_CODE;
-  else if (x_diff > LARGE_LEAK_RANGE || y_diff > LARGE_LEAK_RANGE || z_diff > LARGE_LEAK_RANGE)
-    lstatus = LARGE_LEAK_CODE;
-  else if (x_diff > BIG_LEAK_RANGE || y_diff > BIG_LEAK_RANGE || z_diff > BIG_LEAK_RANGE)
-    lstatus = BIG_LEAK_CODE;
-  else
-    lstatus = NO_LEAK_CODE;
+    if (x_diff > SMALL_LEAK_RANGE || y_diff > SMALL_LEAK_RANGE || z_diff > SMALL_LEAK_RANGE)
+      lstatus = SMALL_LEAK_CODE;
+    else if (x_diff > LARGE_LEAK_RANGE || y_diff > LARGE_LEAK_RANGE || z_diff > LARGE_LEAK_RANGE)
+      lstatus = LARGE_LEAK_CODE;
+    else if (x_diff > BIG_LEAK_RANGE || y_diff > BIG_LEAK_RANGE || z_diff > BIG_LEAK_RANGE)
+      lstatus = BIG_LEAK_CODE;
+    else
+      lstatus = NO_LEAK_CODE;
 
-  return lstatus;
-}
-
-void orientationChecking(int orientation)
-{
-  //int ostatus;
-  switch (orientation) {
-    case MMA8451_PL_PUF:
-      Serial.println("Portrait Up Front"); //z
-      break;
-    case MMA8451_PL_PUB:
-      Serial.println("Portrait Up Back"); //z
-      break;
-    case MMA8451_PL_PDF:
-      Serial.println("Portrait Down Front"); //y
-      break;
-    case MMA8451_PL_PDB:
-      Serial.println("Portrait Down Back");
-      break;
-    case MMA8451_PL_LRF:
-      Serial.println("Landscape Right Front");
-      break;
-    case MMA8451_PL_LRB:
-      Serial.println("Landscape Right Back");
-      break;
-    case MMA8451_PL_LLF:
-      Serial.println("Landscape Left Front");
-      break;
-    case MMA8451_PL_LLB:
-      Serial.println("Landscape Left Back");
-      break;
-    }
+    return lstatus;
+  }
 }
