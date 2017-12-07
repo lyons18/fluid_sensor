@@ -25,7 +25,7 @@ TODO:
 Adafruit_MMA8451 mmaSensor = Adafruit_MMA8451();
 
 void setup(void) {
-  Serial.begin(115200);
+  Serial.begin(9600);
   if (! mmaSensor.begin()) {
     Serial.println("Sensor couldnt start! Check cables!");
     while (1);
