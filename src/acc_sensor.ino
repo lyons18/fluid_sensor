@@ -1,16 +1,8 @@
-/*
-TODO:
-1. ability to change FREQUENCY via mobile app
-2. ability to change CONST_GRAVITY via mobile app
-3. handling request from mobile app to immediately check a "leak status"
-    - checking what type of data Arduino will get
-*/
-
 #include <Adafruit_MMA8451.h>
 #include <Adafruit_Sensor.h>
 
 #define SENSOR_ID 1
-#define FREQUENCY 100 // miliseconds
+#define DEFAULT_FREQUENCY 100 //millis
 #define CONST_SUM 10.50 // m/s
 
 #define NO_LEAK_CODE 100
@@ -21,6 +13,7 @@ TODO:
 #define SMALL_LEAK_RANGE 12
 #define LARGE_LEAK_RANGE 14
 
+int frequency = DEFAULT_FREQUENCY; //milis
 
 Adafruit_MMA8451 mmaSensor = Adafruit_MMA8451();
 
@@ -47,7 +40,38 @@ void loop() {
     String message = String(statusCode) + SENSOR_ID;
     Serial.println(message);
   }
-  delay(FREQUENCY);
+
+  if (Serial.available())
+   {
+     String messageType = Serial.readStringUntil(':');
+     int messageDeviceType = Serial.readStringUntil(':').toInt();
+     int messageValue = Serial.readStringUntil(':').toInt();
+     if (messageType == "GET")
+     {
+       //handling GET messages
+     }
+     else if (messageType == "PUT")
+     {
+       switch( messageDeviceType )
+        {
+        case 600: //change frequency
+            frequency = messageValue;
+            break;
+
+        default:
+            frequency = DEFAULT_FREQUENCY;
+            Serial.println("Incorrect device type! Try again!");
+            Serial.println("Frequency changed to default");
+            break;
+        }
+     }
+     else
+     {
+       Serial.println("Incorrect message type! Try again!");
+     }
+   }
+
+  delay(frequency);
 }
 
 int constLeakChecking(float sum)
