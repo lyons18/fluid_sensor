@@ -6,9 +6,7 @@ Message type sended between arduino and mobile devices:
 - mobile  -> arduino:
 
 Message:
-- type 
-- what resource to change
-- value
+- "type":"what resource to change":value
 
-List of messaages:
-- PUT, frequency, value
+List and model of messaages:
+- put:600:value - string, string, int
