@@ -13,5 +13,5 @@ Message type sended between arduino and mobile devices:
 - z - new value - passed as Integer, but appears only if this is PUT message
 
 For example:
-put:600:120 
-get:400
+- put:600:120 
+- get:400
