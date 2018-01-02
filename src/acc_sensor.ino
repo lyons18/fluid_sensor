@@ -95,9 +95,9 @@ int constLeakChecking(float sum)
 
     if (sum < CONST_SUM)
       lstatus = NO_LEAK_CODE;
-    else if (sum < SMALL_LEAK_RANGE)
+    else if (sum < smallLeakRange)
       lstatus = SMALL_LEAK_CODE;
-    else if (sum < LARGE_LEAK_RANGE)
+    else if (sum < largeLeakRange)
       lstatus = LARGE_LEAK_CODE;
     else
       lstatus = BIG_LEAK_CODE;
