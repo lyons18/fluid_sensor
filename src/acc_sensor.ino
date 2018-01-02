@@ -53,11 +53,11 @@ void loop() {
        switch( messageDeviceType )
         {
         case 100: //get all sensor's info
-            Serial.println("INFO:" + String(frequency));
+            Serial.print("INFO:"+String(frequency)+":"+String(smallLeakRange)+":"+String(largeLeakRange));
             break;
 
         default:
-            Serial.println("Incorrect device type! Try again!");
+            Serial.print("Incorrect device type! Try again!");
             break;
         }
      }
@@ -71,18 +71,20 @@ void loop() {
         case 700: //change leak ranges
             smallLeakRange = messageFirstValue;
             largeLeakRange = messageSecondValue;
+            break;
         case 900: //reset all values
             frequency = DEFAULT_FREQUENCY;
             smallLeakRange = DEFAULT_SMALL_LEAK_RANGE;
             largeLeakRange = DEFAULT_LARGE_LEAK_RANGE;
+            break;
         default:
-            Serial.println("Incorrect device type! Try again!");
+            Serial.print("Incorrect device type! Try again!");
             break;
         }
      }
      else
      {
-       Serial.println("Incorrect message type! Try again!");
+       Serial.print("Incorrect message type! Try again!");
      }
    }
 
