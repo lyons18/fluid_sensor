@@ -9,7 +9,7 @@ Message type sended between arduino and mobile devices:
 - message pattern: x:y:(z):
 
 - x - type_of_message (PUT/GET) - passed as String
-- y - resource_to_change (LED/Button status) - passed as String but as a device code (for example 600)
+- y - resource_to_change (Frequency) - passed as String but as a device code (for example 600)
 - z - new value - passed as Integer, but appears only if this is PUT message
 
 For example:
