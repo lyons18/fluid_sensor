@@ -1,7 +1,6 @@
 #include <Adafruit_MMA8451.h>
 #include <Adafruit_Sensor.h>
 
-#define SENSOR_ID 1
 #define DEFAULT_FREQUENCY 100 //millis
 #define CONST_SUM 10.50 // m/s
 
@@ -10,10 +9,12 @@
 #define LARGE_LEAK_CODE 300
 #define BIG_LEAK_CODE 400
 
-#define SMALL_LEAK_RANGE 12
-#define LARGE_LEAK_RANGE 14
+#define DEFAULT_SMALL_LEAK_RANGE 12 // m/s
+#define DEFAULT_LARGE_LEAK_RANGE 14 // m/s
 
 int frequency = DEFAULT_FREQUENCY; //milis
+int smallLeakRange = DEFAULT_SMALL_LEAK_RANGE; // m/s
+int largeLeakRange = DEFAULT_LARGE_LEAK_RANGE; // m/s
 
 Adafruit_MMA8451 mmaSensor = Adafruit_MMA8451();
 
@@ -37,31 +38,45 @@ void loop() {
   statusCode = constLeakChecking(sum);
   if (statusCode != NO_LEAK_CODE)
   {
-    String message = String(statusCode) + SENSOR_ID;
-    Serial.println(message);
+    String message = String(statusCode);
+    Serial.print("LEAK:" + message);
   }
 
   if (Serial.available())
    {
      String messageType = Serial.readStringUntil(':');
      int messageDeviceType = Serial.readStringUntil(':').toInt();
-     int messageValue = Serial.readStringUntil(':').toInt();
+     int messageFirstValue = Serial.readStringUntil(':').toInt();
+     int messageSecondValue = Serial.readStringUntil(':').toInt();
      if (messageType == "GET")
      {
-       //handling GET messages
+       switch( messageDeviceType )
+        {
+        case 100: //get all sensor's info
+            Serial.println("INFO:" + String(frequency));
+            break;
+
+        default:
+            Serial.println("Incorrect device type! Try again!");
+            break;
+        }
      }
      else if (messageType == "PUT")
      {
        switch( messageDeviceType )
         {
         case 600: //change frequency
-            frequency = messageValue;
+            frequency = messageFirstValue;
             break;
-
-        default:
+        case 700: //change leak ranges
+            smallLeakRange = messageFirstValue;
+            largeLeakRange = messageSecondValue;
+        case 900: //reset all values
             frequency = DEFAULT_FREQUENCY;
+            smallLeakRange = DEFAULT_SMALL_LEAK_RANGE;
+            largeLeakRange = DEFAULT_LARGE_LEAK_RANGE;
+        default:
             Serial.println("Incorrect device type! Try again!");
-            Serial.println("Frequency changed to default");
             break;
         }
      }
